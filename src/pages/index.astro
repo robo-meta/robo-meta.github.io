@@ -4,7 +4,13 @@ import BaseLayout from "../layouts/base-layout.astro"
 <BaseLayout title="Dynamical Metalearning">
     <div class="home-page">
     <p class="abstract">
-        In-context learning has emerged as a key capability of modern neural architectures. While its impact has been significant in domains such as natural language processing, computer vision, and policy generation, its potential for system identification remains underexplored in robotics. Building upon prior work on meta-learnable dynamical modeling with Transformers, we propose a methodology for predicting end-effector poses and joint positions from torque signals for each robotic joint — without requiring prior knowledge of the system’s physical parameters — using diffusion models. In the first part of this work, we enhance the RoboMorph framework by improving dataset generation through large-scale simulation with NVIDIA Isaac Gym, which we also adopt as a baseline for comparison. We then train and compare two complementary in-context learning architectures: a Transformer-based model and a Diffuser-based model, applied to the dynamic behavior of the Franka Emika Panda and KUKA Allegro robotic platforms. To explore different ERNSI Workshop 2025 configurations of the system identification problem using Diffusers, we frame it from multiple perspectives, leveraging classifier guidance, trajectory inpainting, and receding horizon approaches for improved trajectory estimation. Our aim is to investigate the implications of this approach for online control. We demonstrate that our meta-learned models can perform fast online inference, making them suitable for real-time applications. Furthermore, we exploit the inherent flexibility of diffusion models to condition on external signals at inference time — such as controller parameters — enabling enhanced in-context system identification. We conduct extensive benchmarking across a variety of Cartesian and joint space tasks generated in Isaac Gym. Code and datasets will be released to foster reproducibility and further research. 
+        Accurate modeling of robot dynamics is essential for model-based control, yet remains challenging under distributional shifts and real-time constraints. In this work, we formulate system identification as an in-context meta-learning problem and benchmark deterministic and generative sequence models for forward dynamics prediction.
+
+        We take a Transformer-based meta-model, as a strong deterministic baseline, and introduce two complementary diffusion-based approaches: (i) joint trajectory modeling (Diffuser), which learns the full action–state distribution, and (ii) conditioned diffusion models (CNN and Transformer), which generate future states conditioned on control inputs.
+
+        Through large-scale randomized simulation, we analyze performance across in-distribution and out-of-distribution regimes, as well as computational trade-offs relevant for control. We show that diffusion models significantly improve robustness under distribution shift, with the joint formulation achieving the highest accuracy.
+
+        Finally, we demonstrate that warm-started sampling enables diffusion models to operate within real-time constraints, making them viable for MPC. These results highlight generative meta-models as a promising direction for robust system identification in robotics.
     </p>
 
     <div class="intro">
@@ -25,9 +31,9 @@ import BaseLayout from "../layouts/base-layout.astro"
         </div>
     </div>
     <div class="intro-img2">
-    <img src="training_framework.svg" alt="input-output paradigm for query and support sets in a metalearning identification framework" width="800px">
+        <img src="training_framework.svg" alt="input-output paradigm for query and support sets in a metalearning identification framework" width="800px">
     </div>
-    <div class="methods">
+    <div class="simulation performance">
         <p>
             Dynamical models are learnable with <highlight class="highlight">different neural architectures</highlight>.
             <br>
@@ -44,7 +50,7 @@ import BaseLayout from "../layouts/base-layout.astro"
         </div>
     </div>
 
-    <div class="arch-comp">
+    <div class="warmstarting and inference times">
         <p>
             For system identification, transformer based autoregressive models are superior.
         </p>
@@ -57,37 +63,16 @@ import BaseLayout from "../layouts/base-layout.astro"
         </div>
     </div>
 
-    <div class="context-tests">
+    <div class="ablation">
         <p>
-            Context matters: query set size is critical in metalearning. However transformer and diffuser based approaches have different sensitivities to query set size.
+            For system identification, transformer based autoregressive models are superior.
         </p>
         <div class="results">
-            <div><img src="ctxMS.png" alt="rmse errors in contextual texts for 20% MS input tramsformer" class="img1"></div>
-            <div><img src="ctxCH.png" alt="rmse errors in contextual texts for 20% CH input tramsformer" class="img2"></div>
-        </div>
-    </div>
-
-    <div class="sim2real-transformer">
-        <p>
-            Transformer based approaches perform well also in basic sim2real trajectories. A major drawback is the computational requirements due to memory limitations.
-        </p>
-        <div class="results">
-            <div><img src="trf20-rmse.png" alt="rmse errors in real transformer tests 20% ctx" class="img1"></div>
-            <div><img src="trf50-rmse.png" alt="rmse errors in real transformer tests 50% ctx" class="img2"></div>
-        </div>
-        <div class="results">
-            <div><img src="trf20-real.png" alt="position prediction errors in transformer 20% ctx" class="img1"></div>
-            <div><img src="trf50-real.png" alt="position prediction errors in transformer 50% ctx" class="img2"></div>
-        </div>
-    </div>
-
-    <div class="sim2real-diffuser">
-        <p>
-            Diffusion based alternatives have inference time spatial flexibility due to convolutional layers. This comes at a slight cost in performance but overall, especially for periodic signals, extrapolation is facilitated.
-        </p>
-        <div class="results">
-            <div><img src="dif20-rmse.png" alt="rmse errors in real diffuser tests 20% ctx" class="img1" width="550px"></div>
-            <div><img src="dif20-10000-real.png" alt="position prediction errors in diffuser 20% ctx 10x horizon" class="img2" width="500px"></div>
+            <img src="arch-comp.png" alt="comparison of 4 neural architectures on system identification task using MS and CH signals" width="600px">
+            <div>
+                <img src="horizon-pos-trf.png" alt="estimation on cartesian position with transformer models" class="img1">
+                <img src="err-pos-trf.png" alt="errors on cartesian position with transformer models" class="img2">
+            </div>
         </div>
     </div>
     </div>
